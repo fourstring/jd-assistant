@@ -1,0 +1,5 @@
+venv/
+cookies/*
+jd_assistant.log
+QRcode.png
+tg_notify.session
