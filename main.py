@@ -1,8 +1,14 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
+from config import global_config
 from jd_assistant import Assistant
-from notification import telegram_success_notify_callback
 
+if global_config.get('notification', 'enabled') == 'True':
+    from notification import telegram_success_notify_callback
+
+    notify = True
+else:
+    notify = False
 if __name__ == '__main__':
     """
     重要提示：此处为示例代码之一，请移步下面的链接查看使用教程👇
@@ -16,7 +22,7 @@ if __name__ == '__main__':
         asst.clear_cart()
         # asst.exec_reserve_seckill_by_time(sku_id="100009083498", buy_time="2019-11-10 22:42:30.000")
         asst.buy_item_in_stock(sku_ids=skus, area='18_1495_29449_30737', submit_retry=2, stock_interval=2,
-                               then_callbacks=[telegram_success_notify_callback])
+                               then_callbacks=[telegram_success_notify_callback] if notify else None)
     # 执行预约抢购
     # 5个参数
     # sku_id: 商品id
