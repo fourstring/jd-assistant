@@ -1,0 +1,21 @@
+[account]
+payment_pwd =
+
+[config]
+eid =
+fp =
+requests_lock = False # 是否在发起检查下单条件请求时加锁。不加锁可有效提高请求并发量，但存在被封禁ip的可能
+
+[pyrogram]
+api_id =
+api_hash =
+bot_token =
+
+[proxy]
+enabled = True
+hostname = 127.0.0.1
+port = 17891
+
+[notification]
+enabled = False
+target_chat = -123456

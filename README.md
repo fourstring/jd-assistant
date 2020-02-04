@@ -51,32 +51,11 @@ pip install -r requirements.txt
 
 👉 [使用教程请参看Wiki](https://github.com/tychxn/jd-assistant/wiki/1.-%E4%BA%AC%E4%B8%9C%E6%8A%A2%E8%B4%AD%E5%8A%A9%E6%89%8B%E7%94%A8%E6%B3%95)
 
-配置文件模板如下：
-```ini
-[account]
-payment_pwd =
+config.ini.example文件提供了默认配置文件模板，将其修改为`config.ini`即可运行，您也可以根据模板编辑设置。
 
-[config]
-eid =
-fp =
-requests_lock = False # 是否在发起检查下单条件请求时加锁。不加锁可有效提高请求并发量，但存在被封禁ip的可能
+如需使用Telegram通知功能请参考该文档：[Telegram通知使用指南](https://github.com/fourstring/jd-assistant/wiki/Telegram%E9%80%9A%E7%9F%A5%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97)
 
-[pyrogram]
-api_id = 
-api_hash = 
-bot_token = 
-
-[proxy]
-enabled = True
-hostname = 127.0.0.1
-port = 17891
-
-[notification]
-enabled = False
-target_chat = -123456
-```
-请复制该模板到项目根目录下，命名为`config.ini`。默认该模板即可运行，如需使用Telegram通知功能请参考该文档：[Telegram通知使用指南](https://github.com/fourstring/jd-assistant/wiki/Telegram%E9%80%9A%E7%9F%A5%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97)
-
+如遇到读取配置文件时`UnicodeDecodeError: 'gbk' codec can't decode byte 0xaf in position 77: illegal multibyte sequence`错误，请移除`config.ini`中的所有注释。
 ## 更新记录
 - 【2020.02.04】为有货下单功能添加多线程支持，添加Telegram通知
 - 【2020.02.03】查询商品库存方法添加超时，避免少数情况下的卡死问题；对部分代码进行了优化。
