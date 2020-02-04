@@ -1333,11 +1333,15 @@ class Assistant(object):
         items_dict = parse_sku_id(sku_ids)
         items_list = list(items_dict.keys())
         area_id = parse_area_id(area=area)
+        requests_locking = global_config.get('config', 'requests_lock')
 
         def run_thread(sku, cnt):
             while not self._terminate:
                 try:
-                    with self._requests_lock:
+                    if requests_locking == 'True':
+                        with self._requests_lock:
+                            lookup = self.if_item_can_be_ordered(sku_ids={sku: cnt}, area=area_id)
+                    else:
                         lookup = self.if_item_can_be_ordered(sku_ids={sku: cnt}, area=area_id)
                     if not lookup:
                         logger.info(f'线程{threading.current_thread().name}:%s 不满足下单条件，%ss后进行下一次查询', sku, stock_interval)

@@ -59,6 +59,7 @@ payment_pwd =
 [config]
 eid =
 fp =
+requests_lock = False # 是否在发起检查下单条件请求时加锁。不加锁可有效提高请求并发量，但存在被封禁ip的可能
 
 [pyrogram]
 api_id = 
