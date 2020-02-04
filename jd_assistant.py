@@ -1336,23 +1336,26 @@ class Assistant(object):
 
         def run_thread(sku, cnt):
             while not self._terminate:
-                with self._requests_lock:
-                    lookup = self.if_item_can_be_ordered(sku_ids={sku: cnt}, area=area_id)
-                if not lookup:
-                    logger.info(f'线程{threading.current_thread().name}:%s 不满足下单条件，%ss后进行下一次查询', sku, stock_interval)
-                else:
-                    logger.info(f'线程{threading.current_thread().name}:%s 满足下单条件，开始执行', sku)
-                    with self._submit_order_lock:
-                        self._cancel_select_all_cart_item()
-                        self._add_or_change_cart_item(self.get_cart_detail(), sku_id, count)
-                        submit_result = self.submit_order_with_retry(submit_retry, submit_interval)
-                    if submit_result:
-                        for then in then_callbacks:
-                            then(self, sku_id, count)
-                        return
+                try:
+                    with self._requests_lock:
+                        lookup = self.if_item_can_be_ordered(sku_ids={sku: cnt}, area=area_id)
+                    if not lookup:
+                        logger.info(f'线程{threading.current_thread().name}:%s 不满足下单条件，%ss后进行下一次查询', sku, stock_interval)
                     else:
-                        for error_callback in error_callbacks:
-                            error_callback(self, sku_id, count)
+                        logger.info(f'线程{threading.current_thread().name}:%s 满足下单条件，开始执行', sku)
+                        with self._submit_order_lock:
+                            self._cancel_select_all_cart_item()
+                            self._add_or_change_cart_item(self.get_cart_detail(), sku_id, count)
+                            submit_result = self.submit_order_with_retry(submit_retry, submit_interval)
+                        if submit_result:
+                            for then in then_callbacks:
+                                then(self, sku_id, count)
+                            return
+                        else:
+                            for error_callback in error_callbacks:
+                                error_callback(self, sku_id, count)
+                except AsstException as e:
+                    logger.error(f'线程{threading.current_thread().name}:出现异常，正在恢复，如反复出现请检查问题。')
                 time.sleep(stock_interval)
 
         if not wait_all:
