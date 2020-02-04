@@ -3,9 +3,10 @@ import functools
 from pyrogram import Client
 from pyrogram import Filters, Message
 
+from config import global_config
 from jd_assistant import Assistant
 
-TARGET_CHAT = -1001430429970
+TARGET_CHAT = int(global_config.get('notification', 'target_chat'))
 
 
 def telegram_init(telegram_notify):
