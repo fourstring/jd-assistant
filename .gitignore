@@ -1,6 +1,6 @@
-venv/
-cookies/*
-jd-assistant.log*
-QRcode.png
-tg_notify.session
-config.ini
+__pycache__/
+.idea/
+cookies/
+
+*.log
+*.png
