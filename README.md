@@ -51,12 +51,15 @@ pip install -r requirements.txt
 
 👉 [使用教程请参看Wiki](https://github.com/tychxn/jd-assistant/wiki/1.-%E4%BA%AC%E4%B8%9C%E6%8A%A2%E8%B4%AD%E5%8A%A9%E6%89%8B%E7%94%A8%E6%B3%95)
 
+本项目与上游分支的区别在于添加了多线程支持，以及Telegram推送支持，但上游使用的Server酱推送暂未合并。
+
 config.ini.example文件提供了默认配置文件模板，将其修改为`config.ini`即可运行，您也可以根据模板编辑设置。
 
 如需使用Telegram通知功能请参考该文档：[Telegram通知使用指南](https://github.com/fourstring/jd-assistant/wiki/Telegram%E9%80%9A%E7%9F%A5%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97)
 
 如遇到读取配置文件时`UnicodeDecodeError: 'gbk' codec can't decode byte 0xaf in position 77: illegal multibyte sequence`错误，请移除`config.ini`中的所有注释。
 ## 更新记录
+- 【2020.02.07】合并上游项目对京东页面解析的更改，配置文件有变动，详情参考config.ini.example文件
 - 【2020.02.04】为有货下单功能添加多线程支持，添加Telegram通知
 - 【2020.02.03】查询商品库存方法添加超时，避免少数情况下的卡死问题；对部分代码进行了优化。
 - 【2020.02.02】重写了监控库存提交订单功能：监控多商品时可以下单任一有库存商品，具体使用方式请参考wiki。
