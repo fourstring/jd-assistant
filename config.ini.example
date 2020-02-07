@@ -5,6 +5,8 @@ payment_pwd =
 eid =
 fp =
 requests_lock = False # 是否在发起检查下单条件请求时加锁。不加锁可有效提高请求并发量，但存在被封禁ip的可能
+threads_per_product =1 # 每个商品的线程数，最低为1
+# 不建议在不加锁时开启过多线程，可能被京东风控
 
 [pyrogram]
 api_id =

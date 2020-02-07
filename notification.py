@@ -10,12 +10,14 @@ TARGET_CHAT = int(global_config.get('notification', 'target_chat'))
 
 
 def telegram_init(telegram_notify):
-    client = Client("tg_notify")
+    if not hasattr(telegram_init, 'client'):
+        telegram_init.client = Client("tg_notify")
 
-    @client.on_message(filters=Filters.command('jd'))
-    def query_id(app: Client, message: Message):
-        app.send_message(message.chat.id, f'命令发送者id:{message.from_user.id};当前聊天id:{message.chat.id}',
-                         reply_to_message_id=message.message_id)
+        @telegram_init.client.on_message(filters=Filters.command('jd'))
+        def query_id(app: Client, message: Message):
+            app.send_message(message.chat.id, f'命令发送者id:{message.from_user.id};当前聊天id:{message.chat.id}',
+                             reply_to_message_id=message.message_id)
+    client = telegram_init.client
 
     @functools.wraps(telegram_notify)
     def inner(*args, **kwargs):

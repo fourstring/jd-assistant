@@ -49,6 +49,7 @@ class Assistant(object):
             'User-Agent': USER_AGENT,
         }
         self.sess = requests.session()
+        self.sess.proxies = {}
 
         self.item_cat = dict()
         self.item_vender_ids = dict()  # 记录商家id
@@ -796,8 +797,8 @@ class Assistant(object):
             return order_detail
         except requests.exceptions.RequestException as e:
             raise AsstException('订单结算页面获取异常：%s' % e)
-        except Exception as e:
-            logger.error('下单页面数据解析异常：%s', e)
+        # except Exception as e:
+        #     logger.error('下单页面数据解析异常：%s', e)
 
     def _save_invoice(self):
         """下单第三方商品时如果未设置发票，将从电子发票切换为普通发票
@@ -1359,7 +1360,7 @@ class Assistant(object):
                             for error_callback in error_callbacks:
                                 error_callback(self, sku_id, count)
                 except AsstException as e:
-                    logger.error(f'线程{threading.current_thread().name}:出现异常，正在恢复，如反复出现请检查问题。')
+                    logger.error(f'线程{threading.current_thread().name}:出现异常{e}，正在恢复，如反复出现请检查问题。')
                 time.sleep(stock_interval)
 
         if not wait_all:
@@ -1381,8 +1382,15 @@ class Assistant(object):
                 #             error_callback(self, sku_id, count)
                 #
                 # time.sleep(stock_interval)
-                monitor_threads.append(
-                    threading.Thread(target=run_thread, args=(sku_id, count), name=f'MonitorWorker#{i}'))
+                try:
+                    threads_per_product = int(global_config.get('config', 'threads_per_product'))
+                except ValueError:
+                    threads_per_product = 1
+                else:
+                    threads_per_product = 1 if threads_per_product <= 1 else threads_per_product
+                monitor_threads.extend(
+                    [threading.Thread(target=run_thread, args=(sku_id, count), name=f'MonitorWorker#{i}-{j}') for j in
+                     range(threads_per_product)])
             for t in monitor_threads:
                 t.start()
             monitor_threads[0].join()
