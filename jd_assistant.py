@@ -5,8 +5,8 @@ import os
 import pickle
 import random
 import re
-import time
 import threading
+import time
 
 import requests
 from bs4 import BeautifulSoup
@@ -55,6 +55,8 @@ class Assistant(object):
         self.seckill_url = dict()
 
         use_random_ua = global_config.getboolean('config', 'random_useragent')
+        if use_random_ua:
+            logger.info('正在生成随机User-Agent，请稍等，初次运行需收集数据，请耐心等待')
         self.user_agent = DEFAULT_USER_AGENT if not use_random_ua else get_random_useragent()
         self.headers = {'User-Agent': self.user_agent}
         self.eid = global_config.get('config', 'eid').strip()
@@ -1360,12 +1362,12 @@ class Assistant(object):
         items_dict = parse_sku_id(sku_ids)
         items_list = list(items_dict.keys())
         area_id = parse_area_id(area=area)
-        requests_locking = global_config.get('config', 'requests_lock')
+        requests_locking = global_config.getboolean('config', 'requests_lock')
 
         def run_thread(sku, cnt):
             while not self._terminate:
                 try:
-                    if requests_locking == 'True':
+                    if requests_locking:
                         with self._requests_lock:
                             lookup = self.if_item_can_be_ordered(sku_ids={sku: cnt}, area=area_id)
                     else:

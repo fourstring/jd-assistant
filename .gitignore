@@ -1,6 +1,10 @@
 __pycache__/
 .idea/
 cookies/
+venv/
+config.ini
+QRcode.png
+tg_notify.session
 
 *.log
 *.png

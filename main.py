@@ -5,7 +5,7 @@ from jd_assistant import Assistant
 
 TESTING = False  # 设为True测试下单功能是否正常
 
-if global_config.get('notification', 'enabled') == 'True':
+if global_config.getboolean('notification', 'enabled'):
     from notification import telegram_success_notify_callback
 
     notify = True
