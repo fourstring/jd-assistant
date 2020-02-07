@@ -7,8 +7,10 @@ eid =
 fp =
 track_id =
 risk_control =
-requests_lock = false # 是否在发起检查下单条件请求时加锁。不加锁可有效提高请求并发量，但存在被封禁ip的可能
-threads_per_product =1 # 每个商品的线程数，最低为1
+# 是否在发起检查下单条件请求时加锁。不加锁可有效提高请求并发量，但存在被封禁ip的可能
+requests_lock = false
+# 每个商品的线程数，最低为1
+threads_per_product = 1
 # 不建议在不加锁时开启过多线程，可能被京东风控
 timeout = 10
 random_useragent = false
@@ -19,7 +21,8 @@ api_hash =
 bot_token =
 
 [proxy]
-enabled = off # 根据上游库要求，请用on/off表示代理开关
+# 根据上游库要求，请用on/off表示代理开关
+enabled = off
 hostname = 127.0.0.1
 port = 17891
 
