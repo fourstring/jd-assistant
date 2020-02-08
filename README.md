@@ -39,6 +39,7 @@
 - [Requests](http://docs.python-requests.org/en/master/)
 - [Beautiful Soup](https://www.crummy.com/software/BeautifulSoup/bs4/doc/)
 - [PyCryptodome](https://github.com/Legrandin/pycryptodome)
+- [fake-useragent](https://github.com/hellysmile/fake-useragent)
 
 安装：
 ```sh
@@ -59,6 +60,7 @@ config.ini.example文件提供了默认配置文件模板，将其修改为`conf
 
 如遇到读取配置文件时`UnicodeDecodeError: 'gbk' codec can't decode byte 0xaf in position 77: illegal multibyte sequence`错误，请移除`config.ini`中的所有注释。
 ## 更新记录
+- 【2020.02.08】合并上游更改：修复了查询库存接口响应数据结构变化导致的问题。
 - 【2020.02.08】修复上游项目中对部分有货商品的解析错误（会导致错误解析成无货），修复每商品开启多个线程时不同线程重复下单问题
 - 【2020.02.07】合并上游项目对京东页面解析的更改，配置文件有变动，详情参考config.ini.example文件
 - 【2020.02.04】为有货下单功能添加多线程支持，添加Telegram通知
@@ -78,14 +80,13 @@ config.ini.example文件提供了默认配置文件模板，将其修改为`conf
 ## 备注
 
 - 🌟强烈建议大家在部署代码前使用有货的商品测试下单流程，并且：在京东购物车结算页面设置发票为`电子普通发票-个人`，设置支付方式为`在线支付`，否则可能出现各种未知的下单失败问题。🌟
-- 京东商城的登陆/下单机制经常改动，当前测试时间`2020.01.28`。如果失效，欢迎提issue，我会来更新。
-- 图片查看器背景颜色为黑色时，二维码会出现无法扫描的情况 (多发于`win10`系统)，请更换软件打开图片。
+- 京东商城的登陆/下单机制经常改动，当前测试时间`2020.02.08`。如果失效，欢迎提issue，我会来更新。
 - 代码在`macOS`中编写，如果在其他平台上运行出行问题，欢迎提issue。
 
 ## 待完成的功能
 
+- [ ] Keep session alive
 - [ ] 抢优惠券
-- [ ] 邮件通知
 
 ## 不考虑的功能
 
