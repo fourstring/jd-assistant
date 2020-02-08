@@ -466,9 +466,10 @@ class Assistant(object):
 
         resp_json = parse_json(resp.text)
         sku_state = resp_json['stock']['skuState']  # 商品是否上架
+        sku_desc = resp_json['stock']['stockDesc']
         stock_state = resp_json['stock']['StockState']  # 商品库存状态：33 -- 现货  0,34 -- 无货  36 -- 采购中  40 -- 可配货
         # stock_state_name = resp_json['stock']['StockStateName']
-        return sku_state == 1 and stock_state in (33, 40)
+        return sku_state == 1 and (stock_state in (33, 40) or '有货' in sku_desc)
 
     @check_login
     def get_multi_item_stock(self, sku_ids, area):
@@ -1363,6 +1364,7 @@ class Assistant(object):
         items_list = list(items_dict.keys())
         area_id = parse_area_id(area=area)
         requests_locking = global_config.getboolean('config', 'requests_lock')
+        item_purchased_status = {i: False for i in items_list}
 
         def run_thread(sku, cnt):
             while not self._terminate:
@@ -1375,11 +1377,14 @@ class Assistant(object):
                     if not lookup:
                         logger.info(f'线程{threading.current_thread().name}:%s 不满足下单条件，%ss后进行下一次查询', sku, stock_interval)
                     else:
-                        logger.info(f'线程{threading.current_thread().name}:%s 满足下单条件，开始执行', sku)
                         with self._submit_order_lock:
+                            if item_purchased_status[sku_id]:
+                                return
+                            logger.info(f'线程{threading.current_thread().name}:%s 满足下单条件，开始执行', sku)
                             self._cancel_select_all_cart_item()
                             self._add_or_change_cart_item(self.get_cart_detail(), sku_id, count)
                             submit_result = self.submit_order_with_retry(submit_retry, submit_interval)
+                            item_purchased_status[sku_id] = submit_result
                         if submit_result:
                             for then in then_callbacks:
                                 then(self, sku_id, count)

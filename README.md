@@ -59,6 +59,7 @@ config.ini.example文件提供了默认配置文件模板，将其修改为`conf
 
 如遇到读取配置文件时`UnicodeDecodeError: 'gbk' codec can't decode byte 0xaf in position 77: illegal multibyte sequence`错误，请移除`config.ini`中的所有注释。
 ## 更新记录
+- 【2020.02.08】修复上游项目中对部分有货商品的解析错误（会导致错误解析成无货），修复每商品开启多个线程时不同线程重复下单问题
 - 【2020.02.07】合并上游项目对京东页面解析的更改，配置文件有变动，详情参考config.ini.example文件
 - 【2020.02.04】为有货下单功能添加多线程支持，添加Telegram通知
 - 【2020.02.03】查询商品库存方法添加超时，避免少数情况下的卡死问题；对部分代码进行了优化。

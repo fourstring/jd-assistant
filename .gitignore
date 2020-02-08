@@ -6,5 +6,5 @@ config.ini
 QRcode.png
 tg_notify.session
 
-*.log
+*.log*
 *.png
