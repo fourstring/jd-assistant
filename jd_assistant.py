@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+import contextlib
 import json
 import os
 import pickle
@@ -39,6 +40,8 @@ class Assistant(object):
     _requests_lock = threading.Lock()
     _submit_order_lock = threading.Lock()
     _terminate = False
+    _no_order_submitting = threading.Event()
+    _no_order_submitting.set()
 
     def __init__(self):
         self.username = ''
@@ -59,10 +62,10 @@ class Assistant(object):
             logger.info('正在生成随机User-Agent，请稍等，初次运行需收集数据，请耐心等待')
         self.user_agent = DEFAULT_USER_AGENT if not use_random_ua else get_random_useragent()
         self.headers = {'User-Agent': self.user_agent}
-        self.eid = global_config.get('config', 'eid').strip()
-        self.fp = global_config.get('config', 'fp').strip()
-        self.track_id = global_config.get('config', 'track_id').strip()
-        self.risk_control = global_config.get('config', 'risk_control').strip()
+        self.eid = global_config.get('config', 'eid')
+        self.fp = global_config.get('config', 'fp')
+        self.track_id = global_config.get('config', 'track_id')
+        self.risk_control = global_config.get('config', 'risk_control')
         if not self.eid or not self.fp or not self.track_id or not self.risk_control:
             raise AsstException('请在 config.ini 中配置 eid, fp, track_id, risk_control 参数，具体请参考 wiki-常见问题')
 
@@ -1371,8 +1374,15 @@ class Assistant(object):
         requests_locking = global_config.getboolean('config', 'requests_lock')
         item_purchased_status = {i: False for i in items_list}
 
+        @contextlib.contextmanager
+        def order_submitting_event():
+            self._no_order_submitting.clear()
+            yield
+            self._no_order_submitting.set()
+
         def run_thread(sku, cnt):
             while not self._terminate:
+                self._no_order_submitting.wait()
                 try:
                     if requests_locking:
                         with self._requests_lock:
@@ -1382,7 +1392,7 @@ class Assistant(object):
                     if not lookup:
                         logger.info(f'线程{threading.current_thread().name}:%s 不满足下单条件，%ss后进行下一次查询', sku, stock_interval)
                     else:
-                        with self._submit_order_lock:
+                        with self._submit_order_lock, order_submitting_event():
                             if item_purchased_status[sku_id]:
                                 return
                             logger.info(f'线程{threading.current_thread().name}:%s 满足下单条件，开始执行', sku)
@@ -1390,6 +1400,7 @@ class Assistant(object):
                             self._add_or_change_cart_item(self.get_cart_detail(), sku_id, count)
                             submit_result = self.submit_order_with_retry(submit_retry, submit_interval)
                             item_purchased_status[sku_id] = submit_result
+
                         if submit_result:
                             for then in then_callbacks:
                                 then(self, sku_id, count)
