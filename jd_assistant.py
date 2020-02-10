@@ -972,7 +972,7 @@ class Assistant(object):
         """
         for i in range(1, retry + 1):
             logger.info('第[%s/%s]次尝试提交订单', i, retry)
-            self.get_checkout_page_detail()
+            # self.get_checkout_page_detail()
             if self.submit_order():
                 logger.info('第%s次提交订单成功', i)
                 return True
